@@ -20,18 +20,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Download and Unpack Gradle Distribution
-        run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip -O gradle-8.7-bin.zip
-          unzip -q gradle-8.7-bin.zip
-          ls -l # Listar para debug
-          ls -l gradle-8.7/bin # Listar para debug
-
-      - name: Set execute permission for gradlew
-        run: chmod +x gradlew
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3 # Esta é a nova ação!
 
       - name: Build with Gradle
         run: ./gradlew assembleDebug
