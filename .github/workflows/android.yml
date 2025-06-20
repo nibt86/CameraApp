@@ -20,24 +20,20 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Validate gradlew permissions
+      - name: Ensure gradlew is executable and wrapper JAR is present
         run: |
           chmod +x gradlew
-          ls -l gradlew # Adiciona um log para verificar as permissões
-
-      - name: Download Gradle Wrapper JAR if missing
-        run: |
           mkdir -p gradle/wrapper
-          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-            echo "gradle-wrapper.jar not found, downloading..."
+          # Se o gradle-wrapper.jar não existir ou for muito pequeno (vazio), baixe-o.
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ] || [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Downloading gradle-wrapper.jar..."
             wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip -O gradle-8.7-bin.zip
-            unzip -q gradle-8.7-bin.zip
+            unzip -o -q gradle-8.7-bin.zip
             mv gradle-8.7/lib/gradle-wrapper.jar gradle/wrapper/gradle-wrapper.jar
             rm -rf gradle-8.7 gradle-8.7-bin.zip
-          else
-            echo "gradle-wrapper.jar found."
           fi
-          ls -l gradle/wrapper/gradle-wrapper.jar # Adiciona um log para verificar o JAR
+          ls -l gradle/wrapper/gradle-wrapper.jar # Verificar o tamanho do JAR
+          java -jar gradle/wrapper/gradle-wrapper.jar --version # Tentar executar diretamente para testar
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
