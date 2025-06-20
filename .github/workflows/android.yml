@@ -34,3 +34,4 @@ jobs:
         with:
           name: camera-app-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+          
