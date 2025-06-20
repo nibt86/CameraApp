@@ -20,6 +20,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Download gradle-wrapper.jar if missing
+        run: |
+          mkdir -p gradle/wrapper
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip -O gradle-8.7-bin.zip
+            unzip -q gradle-8.7-bin.zip
+            mv gradle-8.7/lib/gradle-wrapper.jar gradle/wrapper/gradle-wrapper.jar
+            rm -rf gradle-8.7 gradle-8.7-bin.zip
+          fi
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
