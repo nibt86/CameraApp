@@ -23,18 +23,26 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Download and install Gradle
+      - name: Download and install Gradle in user's home
         run: |
           GRADLE_VERSION=8.7
+          GRADLE_DIR=${{ github.workspace }}/gradle-dist
           GRADLE_ZIP=gradle-${GRADLE_VERSION}-bin.zip
-          wget -q https://services.gradle.org/distributions/${GRADLE_ZIP}
-          unzip -q ${GRADLE_ZIP} -d /usr/local/
+
+          mkdir -p ${GRADLE_DIR} # Garante que o diretório de destino exista
+          wget -q https://services.gradle.org/distributions/${GRADLE_ZIP} -O ${GRADLE_ZIP}
+          unzip -q ${GRADLE_ZIP} -d ${GRADLE_DIR}
           rm ${GRADLE_ZIP}
-          export PATH="/usr/local/gradle-${GRADLE_VERSION}/bin:$PATH"
-          gradle --version # Verifique se o Gradle foi instalado corretamente
+
+          # Adiciona o Gradle ao PATH apenas para esta execução
+          echo "${GRADLE_DIR}/gradle-${GRADLE_VERSION}/bin" >> $GITHUB_PATH
+
+          # Verifica se o Gradle está no PATH e é executável
+          which gradle
+          gradle --version
 
       - name: Build with Gradle
-        run: gradle assembleDebug # Observe que agora é 'gradle' e não './gradlew'
+        run: gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
