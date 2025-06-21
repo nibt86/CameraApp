@@ -29,20 +29,19 @@ jobs:
           GRADLE_DIR=${{ github.workspace }}/gradle-dist
           GRADLE_ZIP=gradle-${GRADLE_VERSION}-bin.zip
 
-          mkdir -p ${GRADLE_DIR} # Garante que o diretório de destino exista
+          mkdir -p ${GRADLE_DIR}
           wget -q https://services.gradle.org/distributions/${GRADLE_ZIP} -O ${GRADLE_ZIP}
           unzip -q ${GRADLE_ZIP} -d ${GRADLE_DIR}
           rm ${GRADLE_ZIP}
 
-          # Adiciona o Gradle ao PATH apenas para esta execução
           echo "${GRADLE_DIR}/gradle-${GRADLE_VERSION}/bin" >> $GITHUB_PATH
 
-          # Verifica se o Gradle está no PATH e é executável
           which gradle
           gradle --version
 
-      - name: Build with Gradle
-        run: gradle assembleDebug
+      - name: Clean and Build with Gradle
+        run: gradle clean assembleDebug
+        # Adicionamos 'clean' aqui para garantir que o Gradle recarregue as configurações
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
